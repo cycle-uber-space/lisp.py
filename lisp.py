@@ -81,6 +81,46 @@ def intern(name):
     else:
         return make_symbol(name)
 
+class Cons:
+    def __init__(self, a, b):
+        self.a = a
+        self.b = b
+    def __iter__(self):
+        return ListIter(self)
+    def __repr__(self):
+        return "(" + py_repr(self.a) + " . " + py_repr(self.b) + ")"
+    def __len__(self):
+        ret = 0
+        tmp = self
+        while not is_nil(tmp):
+            ret += 1
+            tmp = cdr(tmp)
+        return ret
+
+def is_cons(exp):
+    return isinstance(exp, Cons)
+
+def cons(a, b):
+    return Cons(a, b)
+
+def car(exp):
+    """
+>>> car(cons(intern("foo"), intern("bar")))
+foo
+"""
+    if not is_cons(exp):
+        return make_error(format("not a cons {}", repr_expr(exp)))
+    return exp.a
+
+def cdr(exp):
+    """
+>>> cdr(cons(intern("foo"), intern("bar")))
+bar
+"""
+    if not is_cons(exp):
+        return make_error(format("not a cons {}", repr_expr(exp)))
+    return exp.b
+
 def eq(a, b):
     """
 >>> eq(nil, nil)
