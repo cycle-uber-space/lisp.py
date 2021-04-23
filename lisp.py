@@ -146,6 +146,18 @@ def set_car(exp, val):
 def set_cdr(exp, val):
     exp.b = val
 
+def caar(exp):
+    return car(car(exp))
+
+def cadr(exp):
+    return car(cdr(exp))
+
+def cdar(exp):
+    return cdr(car(exp))
+
+def cddr(exp):
+    return cdr(cdr(exp))
+
 #
 # core
 #
