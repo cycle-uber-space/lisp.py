@@ -449,6 +449,8 @@ def eval(exp, env):
         return exp
     elif is_named_op(exp, "quote"):
         return cadr(exp)
+    elif is_named_op(exp, "lit"):
+        return exp
     else:
         return make_error("cannot eval " + repr_expr(exp))
 
@@ -460,6 +462,10 @@ def eval_src(src, env):
 'nil'
 >>> eval_src("'foo", nil)
 'foo'
+>>> eval_src("'(lit foo bar baz)", nil)
+'(lit foo bar baz)'
+>>> eval_src("'(lit)", nil)
+'(lit)'
 """
     return repr_expr(eval(read_one_from_string(src), env))
 
