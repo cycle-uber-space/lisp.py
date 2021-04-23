@@ -466,8 +466,19 @@ def eval(exp, env):
         return cadr(exp)
     elif is_named_op(exp, "lit"):
         return exp
+    elif is_named_op(exp, "if"):
+        return eval_if(exp, env)
     else:
         return make_error("cannot eval " + repr_expr(exp))
+
+def eval_if(exp, env):
+    test = cadr(exp)
+    then = caddr(exp)
+    if not is_nil(eval(test, env)):
+        return eval(then, env)
+    if not is_nil(cdddr(exp)):
+        return eval(cadddr(exp), env)
+    return nil
 
 def eval_src(src, env):
     """
@@ -485,6 +496,12 @@ def eval_src(src, env):
 '(lit)'
 >>> eval_src("(lit)", nil)
 '(lit)'
+>>> eval_src("(if 't 'a 'b)", nil)
+'a'
+>>> eval_src("(if nil 'a 'b)", nil)
+'b'
+>>> eval_src("(if nil 'a)", nil)
+'nil'
 """
     return repr_expr(eval(read_one_from_string(src), env))
 
