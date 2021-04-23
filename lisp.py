@@ -216,6 +216,25 @@ def at_end(stream):
     return stream.at_end()
 
 #
+# comment
+#
+
+class Comment:
+    def __init__(self, text):
+        self.text = text
+    def __repr__(self):
+        return repr(self.text)
+
+def make_comment(text):
+    return Comment(text)
+
+def is_comment(exp):
+    return isinstance(exp, Comment)
+
+def comment_text(exp):
+    return exp.text
+
+#
 # main
 #
 
