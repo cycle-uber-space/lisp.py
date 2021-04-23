@@ -414,6 +414,23 @@ def is_symbol_part(ch):
     return is_symbol_start(ch)
 
 #
+# interpreter
+#
+
+def eval(exp, env):
+    if is_nil(exp):
+        return exp
+    else:
+        return make_error("cannot eval " + repr_expr(exp))
+
+def eval_src(src, env):
+    """
+>>> eval_src("nil", nil)
+'nil'
+"""
+    return repr_expr(eval(read_one_from_string(src), env))
+
+#
 # main
 #
 
