@@ -248,6 +248,10 @@ def repr_expr(exp):
 'nil'
 >>> repr_expr(intern("foo"))
 'foo'
+>>> repr_expr(cons(intern("foo"), nil))
+'(foo)'
+>>> repr_expr(cons(intern("foo"), intern("bar")))
+'(foo . bar)'
 """
     out = StringOutputStream()
     opts = PrinterOpts(out)
@@ -260,8 +264,27 @@ def render_expr(exp, opts):
         put_string(out, "nil")
     elif is_symbol(exp):
         put_string(out, symbol_name(exp))
+    elif is_cons(exp):
+        render_list(exp, opts)
     else:
         make_error("cannot print " + str(exp))
+
+def render_list(exp, opts):
+    out = opts.out
+    put_string(out, "(")
+    # TODO need to keep a visited set for recursive structures
+    render_expr(car(exp), opts)
+    tmp = cdr(exp)
+    while not is_nil(tmp):
+        if is_cons(tmp):
+            put_string(out, " ")
+            render_expr(car(tmp), opts)
+        else:
+            put_string(out, " . ")
+            render_expr(tmp, opts)
+            break
+        tmp = cdr(tmp)
+    put_string(out, ")")
 
 #
 # comment
