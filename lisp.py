@@ -175,6 +175,47 @@ True
     return eq(a, b)
 
 #
+# stream
+#
+
+class StringInputStream:
+    def __init__(self, src):
+        self.src = src
+        self.pos = 0
+
+    def peek(self):
+        if self.pos < len(self.src):
+            return self.src[self.pos]
+        else:
+            return 0
+
+    def advance(self):
+        self.pos += 1
+
+    def consume(self):
+        ret = self.peek()
+        self.advance()
+        return ret
+
+    def at_end(self):
+        return self.peek() == 0
+
+def make_string_input_stream(src):
+    return StringInputStream(src)
+
+def peek(stream):
+    return stream.peek()
+
+def advance(stream):
+    stream.advance()
+
+def consume(stream):
+    return stream.consume()
+
+def at_end(stream):
+    return stream.at_end()
+
+#
 # main
 #
 
