@@ -323,6 +323,8 @@ def read_one_from_string(src, comments = False):
 '(foo)'
 >>> repr_expr(read_one_from_string("(foo)"))
 '(foo)'
+>>> repr_expr(read_one_from_string("'foo"))
+'(quote foo)'
 """
     stream = make_string_input_stream(src)
     return parse_expr(stream, comments)
@@ -339,6 +341,10 @@ def parse_expr(stream, comments = False):
 
     elif peek(stream) == "(":
         return parse_list(stream, comments)
+
+    elif peek(stream) == "'":
+        advance(stream)
+        return cons(intern("quote"), cons(parse_expr(stream, comments), nil))
 
     elif is_symbol_start(peek(stream)):
         while is_symbol_part(peek(stream)):
