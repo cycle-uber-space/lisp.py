@@ -246,6 +246,8 @@ def repr_expr(exp):
     """
 >>> repr_expr(nil)
 'nil'
+>>> repr_expr(intern("foo"))
+'foo'
 """
     out = StringOutputStream()
     opts = PrinterOpts(out)
@@ -256,6 +258,8 @@ def render_expr(exp, opts):
     out = opts.out
     if is_nil(exp):
         put_string(out, "nil")
+    elif is_symbol(exp):
+        put_string(out, symbol_name(exp))
     else:
         make_error("cannot print " + str(exp))
 
