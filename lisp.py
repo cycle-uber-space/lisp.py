@@ -234,6 +234,32 @@ def put_int(out, val):
     put_string(out, format("{}", val))
 
 #
+# printer
+#
+
+class PrinterOpts:
+    def __init__(self, out):
+        self.out = out
+        self.pretty = False
+
+def repr_expr(exp):
+    """
+>>> repr_expr(nil)
+'nil'
+"""
+    out = StringOutputStream()
+    opts = PrinterOpts(out)
+    render_expr(exp, opts)
+    return out.value
+
+def render_expr(exp, opts):
+    out = opts.out
+    if is_nil(exp):
+        put_string(out, "nil")
+    else:
+        make_error("cannot print " + str(exp))
+
+#
 # comment
 #
 
