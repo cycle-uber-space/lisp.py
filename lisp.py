@@ -41,6 +41,18 @@ def intern(name):
     else:
         return make_symbol(name)
 
+def eq(a, b):
+    if py_type(a) == py_type(b):
+        if is_symbol(a):
+            return symbol_name(a) == symbol_name(b)
+        else:
+            return a == b
+    else:
+        return a == b
+
+def equal(a, b):
+    return eq(a, b)
+
 def make_error(text):
     raise Exception(text)
 
