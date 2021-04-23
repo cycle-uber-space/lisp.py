@@ -35,6 +35,12 @@ def make_symbol(name):
 def symbol_name(exp):
     return exp.name
 
+def intern(name):
+    if name == "nil":
+        return nil
+    else:
+        return make_symbol(name)
+
 def make_error(text):
     raise Exception(text)
 
