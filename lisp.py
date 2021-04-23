@@ -239,6 +239,14 @@ def comment_text(exp):
 #
 
 def read_one_from_string(src, comments = False):
+    """
+>>> read_one_from_string("nil")
+nil
+>>> read_one_from_string("foo")
+foo
+>>> read_one_from_string("(defun add (a b) (+ a b))") # TODO use printer
+(defun . (add . ((a . (b . nil)) . ((+ . (a . (b . nil))) . nil))))
+"""
     stream = make_string_input_stream(src)
     return parse_expr(stream, comments)
 
