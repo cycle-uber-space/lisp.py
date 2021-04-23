@@ -477,9 +477,11 @@ def eval_src(src, env):
 'nil'
 >>> eval_src("'foo", nil)
 'foo'
->>> eval_src("'(lit foo bar baz)", nil)
+>>> eval_src("(lit foo bar baz)", nil)
 '(lit foo bar baz)'
->>> eval_src("'(lit)", nil)
+>>> eval_src("(lit)", nil)
+'(lit)'
+>>> eval_src("(lit)", nil)
 '(lit)'
 """
     return repr_expr(eval(read_one_from_string(src), env))
