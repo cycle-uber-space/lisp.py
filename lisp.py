@@ -140,6 +140,12 @@ bar
         return make_error(format("not a cons {}", repr_expr(exp)))
     return exp.b
 
+def set_car(exp, val):
+    exp.a = val
+
+def set_cdr(exp, val):
+    exp.b = val
+
 #
 # core
 #
