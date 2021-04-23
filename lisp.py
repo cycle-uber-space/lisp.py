@@ -7,6 +7,36 @@ py_list = list
 py_type = type
 py_repr = repr
 
+def join(s, l):
+    return s.join(l)
+
+def strip(s):
+    return s.strip()
+
+def split(s, *args):
+    return s.split(*args)
+
+def format(s, *args):
+    return s.format(*args)
+
+def escape(text, sep):
+    ret = ""
+    ret += sep
+    for ch in text:
+        if ch == sep or ch == "\\":
+            ret += "\\"
+            ret += ch
+        elif ch == "\n":
+            ret += "\\n"
+        elif ch == "\t":
+            ret += "\\t"
+        elif ch == chr(0x1b):
+            ret += format("\\x{:02x}", ord(ch))
+        else:
+            ret += ch
+    ret += sep
+    return ret
+
 class Nil:
     def __iter__(self):
         return ListIter(self)
