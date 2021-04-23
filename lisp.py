@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys, doctest
+import sys, re, doctest
 
 #
 # util
@@ -233,6 +233,100 @@ def is_comment(exp):
 
 def comment_text(exp):
     return exp.text
+
+#
+# reader
+#
+
+def read_one_from_string(src, comments = False):
+    stream = make_string_input_stream(src)
+    return parse_expr(stream, comments)
+
+def parse_expr(stream, comments = False):
+    lexeme = ""
+    skip_junk(stream, not comments)
+    if comments and peek(stream) == ";":
+        while peek(stream) and peek(stream) != "\n":
+            lexeme += consume(stream)
+        if peek(stream):
+            advance(stream)
+        return Comment(lexeme)
+
+    elif peek(stream) == "(":
+        return parse_list(stream, comments)
+
+    elif is_symbol_start(peek(stream)):
+        while is_symbol_part(peek(stream)):
+            lexeme += consume(stream)
+
+        if re.match("^-?[0-9]+$", lexeme):
+            return int(lexeme)
+
+        return intern(lexeme)
+
+    else:
+        return make_error("unexpected '" + str(peek(stream)) + "'")
+
+def parse_list(stream, comments = False):
+    if peek(stream) != "(":
+        return make_error()
+    advance(stream)
+    head = tail = nil
+    while True:
+        skip_junk(stream)
+        if peek(stream) == 0:
+            return make_error("unexpected end of stream while parsing list")
+        if peek(stream) == ")":
+            break
+        exp = parse_expr(stream, comments)
+        if eq(exp, intern(".")):
+            exp = parse_expr(stream, comments)
+            set_cdr(tail, exp)
+            skip_junk(stream)
+            break
+        else:
+            next = cons(exp, nil)
+            if is_nil(tail):
+                head = tail = next
+            else:
+                set_cdr(tail, next)
+                tail = next
+    if peek(stream) != ")":
+        return make_error("missing closing ')'")
+    advance(stream)
+    return head
+
+def skip_junk(stream, comments = True):
+    while skip_ws(stream) or comments and skip_comment(stream):
+        pass
+
+def skip_ws(stream):
+    if is_ws(peek(stream)):
+        while is_ws(peek(stream)):
+            advance(stream)
+        return True
+
+def skip_comment(stream):
+    if is_comment_start(peek(stream)):
+        advance(stream)
+        while is_comment_part(peek(stream)):
+            advance(stream)
+        return True
+
+def is_ws(ch):
+    return ch and ch in " \n\t"
+
+def is_comment_start(ch):
+    return ch == ";"
+
+def is_comment_part(ch):
+    return ch and ch != "\n"
+
+def is_symbol_start(ch):
+    return ch and not is_ws(ch) and ch not in "\"();'"
+
+def is_symbol_part(ch):
+    return is_symbol_start(ch)
 
 #
 # main
