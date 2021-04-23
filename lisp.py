@@ -58,6 +58,9 @@ def make_error(text):
 
 def unit_test():
     assert is_nil(nil)
+    assert eq(nil, nil)
+    assert eq(nil, intern("nil"))
+    assert equal(nil, nil)
 
 def main(argc, argv):
     if argc < 2:
