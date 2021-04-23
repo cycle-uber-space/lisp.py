@@ -158,6 +158,21 @@ def cdar(exp):
 def cddr(exp):
     return cdr(cdr(exp))
 
+def caadr(exp):
+    return car(car(cdr(exp)))
+
+def caddr(exp):
+    return car(cdr(cdr(exp)))
+
+def cdddr(exp):
+    return cdr(cdr(cdr(exp)))
+
+def cadddr(exp):
+    return car(cdr(cdr(cdr(exp))))
+
+def cddddr(exp):
+    return cdr(cdr(cdr(cdr(exp))))
+
 #
 # core
 #
