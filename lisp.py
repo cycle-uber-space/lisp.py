@@ -435,9 +435,20 @@ def is_symbol_part(ch):
 # interpreter
 #
 
+def is_op(exp, sym):
+    return is_cons(exp) and eq(car(exp), sym)
+
+def is_named_op(exp, *names):
+    for name in names:
+        if is_op(exp, intern(name)):
+            return name
+    return False
+
 def eval(exp, env):
     if is_nil(exp):
         return exp
+    elif is_named_op(exp, "quote"):
+        return cadr(exp)
     else:
         return make_error("cannot eval " + repr_expr(exp))
 
@@ -445,6 +456,10 @@ def eval_src(src, env):
     """
 >>> eval_src("nil", nil)
 'nil'
+>>> eval_src("'nil", nil)
+'nil'
+>>> eval_src("'foo", nil)
+'foo'
 """
     return repr_expr(eval(read_one_from_string(src), env))
 
