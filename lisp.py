@@ -20,6 +20,21 @@ nil = Nil()
 def is_nil(exp):
     return isinstance(exp, Nil)
 
+class Symbol:
+    def __init__(self, name):
+        self.name = name
+    def __repr__(self):
+        return self.name
+
+def is_symbol(exp):
+    return isinstance(exp, Symbol)
+
+def make_symbol(name):
+    return Symbol(name)
+
+def symbol_name(exp):
+    return exp.name
+
 def make_error(text):
     raise Exception(text)
 
