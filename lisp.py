@@ -1,6 +1,10 @@
 #!/usr/bin/env python3
 import sys, doctest
 
+#
+# util
+#
+
 py_print = print
 py_eval = eval
 py_list = list
@@ -46,6 +50,10 @@ def escape(text, sep):
     ret += sep
     return ret
 
+#
+# nil
+#
+
 class Nil:
     def __iter__(self):
         return ListIter(self)
@@ -62,6 +70,10 @@ def is_nil(exp):
 True
 """
     return isinstance(exp, Nil)
+
+#
+# symbol
+#
 
 class Symbol:
     def __init__(self, name):
@@ -83,6 +95,10 @@ def intern(name):
         return nil
     else:
         return make_symbol(name)
+
+#
+# cons
+#
 
 class Cons:
     def __init__(self, a, b):
@@ -124,6 +140,10 @@ bar
         return make_error(format("not a cons {}", repr_expr(exp)))
     return exp.b
 
+#
+# core
+#
+
 def eq(a, b):
     """
 >>> eq(nil, nil)
@@ -147,6 +167,10 @@ def equal(a, b):
 True
 """
     return eq(a, b)
+
+#
+# main
+#
 
 def main(argc, argv):
     if argc < 2:
