@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import sys
+import sys, doctest
 
 py_print = print
 py_eval = eval
@@ -18,6 +18,10 @@ class Nil:
 nil = Nil()
 
 def is_nil(exp):
+    """
+>>> is_nil(nil)
+True
+"""
     return isinstance(exp, Nil)
 
 class Symbol:
@@ -42,6 +46,14 @@ def intern(name):
         return make_symbol(name)
 
 def eq(a, b):
+    """
+>>> eq(nil, nil)
+True
+>>> eq(nil, intern("nil"))
+True
+>>> eq(nil, intern("foo"))
+False
+"""
     if py_type(a) == py_type(b):
         if is_symbol(a):
             return symbol_name(a) == symbol_name(b)
@@ -51,23 +63,21 @@ def eq(a, b):
         return a == b
 
 def equal(a, b):
+    """
+>>> equal(nil, nil)
+True
+"""
     return eq(a, b)
 
 def make_error(text):
     raise Exception(text)
-
-def unit_test():
-    assert is_nil(nil)
-    assert eq(nil, nil)
-    assert eq(nil, intern("nil"))
-    assert equal(nil, nil)
 
 def main(argc, argv):
     if argc < 2:
         make_error("missing command")
     cmd = argv[1]
     if cmd == "unit":
-        unit_test()
+        doctest.testmod()
 
 if __name__ == "__main__":
     main(len(sys.argv), sys.argv)
