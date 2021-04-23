@@ -20,6 +20,12 @@ def format(s, *args):
     return s.format(*args)
 
 def escape(text, sep):
+    """
+>>> escape("foo", "\\"")
+'"foo"'
+>>> escape("foo", "'")
+"'foo'"
+"""
     ret = ""
     ret += sep
     for ch in text:
