@@ -215,6 +215,24 @@ def consume(stream):
 def at_end(stream):
     return stream.at_end()
 
+class StringOutputStream:
+    def __init__(self):
+        self.value = ""
+    def put_string(self, text):
+        self.value += text
+
+def make_string_output_stream():
+    return StringOutputStream()
+
+def put_string(out, val):
+    if out is None:
+        print(val, end = "")
+    else:
+        out.put_string(val)
+
+def put_int(out, val):
+    put_string(out, format("{}", val))
+
 #
 # comment
 #
