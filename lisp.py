@@ -7,6 +7,9 @@ py_list = list
 py_type = type
 py_repr = repr
 
+def make_error(text):
+    raise Exception(text)
+
 def join(s, l):
     return s.join(l)
 
@@ -144,9 +147,6 @@ def equal(a, b):
 True
 """
     return eq(a, b)
-
-def make_error(text):
-    raise Exception(text)
 
 def main(argc, argv):
     if argc < 2:
