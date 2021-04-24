@@ -339,6 +339,7 @@ def render_list(exp, opts):
 class ReaderOpts:
     def __init__(self):
         self.read_comments = False
+        self.read_quote    = True
 
 def read_one_from_string(src, opts=ReaderOpts()):
     """
@@ -373,7 +374,7 @@ def parse_expr(stream, opts):
     elif peek(stream) == "(":
         return parse_list(stream, opts)
 
-    elif peek(stream) == "'":
+    elif opts.read_quote and peek(stream) == "'":
         advance(stream)
         return cons(intern("quote"), cons(parse_expr(stream, opts), nil))
 
