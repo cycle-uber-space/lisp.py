@@ -174,6 +174,25 @@ def cddddr(exp):
     return cdr(cdr(cdr(cdr(exp))))
 
 #
+# comment
+#
+
+class Comment:
+    def __init__(self, text):
+        self.text = text
+    def __repr__(self):
+        return repr(self.text)
+
+def make_comment(text):
+    return Comment(text)
+
+def is_comment(exp):
+    return isinstance(exp, Comment)
+
+def comment_text(exp):
+    return exp.text
+
+#
 # core
 #
 
@@ -312,25 +331,6 @@ def render_list(exp, opts):
             break
         tmp = cdr(tmp)
     put_string(out, ")")
-
-#
-# comment
-#
-
-class Comment:
-    def __init__(self, text):
-        self.text = text
-    def __repr__(self):
-        return repr(self.text)
-
-def make_comment(text):
-    return Comment(text)
-
-def is_comment(exp):
-    return isinstance(exp, Comment)
-
-def comment_text(exp):
-    return exp.text
 
 #
 # reader
