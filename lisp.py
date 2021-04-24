@@ -336,7 +336,11 @@ def render_list(exp, opts):
 # reader
 #
 
-def read_one_from_string(src, comments = False):
+class ReaderOpts:
+    def __init__(self):
+        self.read_comments = False
+
+def read_one_from_string(src, opts=ReaderOpts()):
     """
 >>> repr_expr(read_one_from_string("nil"))
 'nil'
@@ -354,12 +358,12 @@ def read_one_from_string(src, comments = False):
 '(quote foo)'
 """
     stream = make_string_input_stream(src)
-    return parse_expr(stream, comments)
+    return parse_expr(stream, opts)
 
-def parse_expr(stream, comments = False):
+def parse_expr(stream, opts):
     lexeme = ""
-    skip_junk(stream, not comments)
-    if comments and peek(stream) == ";":
+    skip_junk(stream, opts)
+    if opts.read_comments and peek(stream) == ";":
         while peek(stream) and peek(stream) != "\n":
             lexeme += consume(stream)
         if peek(stream):
@@ -367,11 +371,11 @@ def parse_expr(stream, comments = False):
         return Comment(lexeme)
 
     elif peek(stream) == "(":
-        return parse_list(stream, comments)
+        return parse_list(stream, opts)
 
     elif peek(stream) == "'":
         advance(stream)
-        return cons(intern("quote"), cons(parse_expr(stream, comments), nil))
+        return cons(intern("quote"), cons(parse_expr(stream, opts), nil))
 
     elif is_symbol_start(peek(stream)):
         while is_symbol_part(peek(stream)):
@@ -385,22 +389,22 @@ def parse_expr(stream, comments = False):
     else:
         return make_error("unexpected '" + str(peek(stream)) + "'")
 
-def parse_list(stream, comments = False):
+def parse_list(stream, opts):
     if peek(stream) != "(":
         return make_error()
     advance(stream)
     head = tail = nil
     while True:
-        skip_junk(stream)
+        skip_junk(stream, opts)
         if peek(stream) == 0:
             return make_error("unexpected end of stream while parsing list")
         if peek(stream) == ")":
             break
-        exp = parse_expr(stream, comments)
+        exp = parse_expr(stream, opts)
         if eq(exp, intern(".")):
-            exp = parse_expr(stream, comments)
+            exp = parse_expr(stream, opts)
             set_cdr(tail, exp)
-            skip_junk(stream)
+            skip_junk(stream, opts)
             break
         else:
             next = cons(exp, nil)
@@ -414,8 +418,8 @@ def parse_list(stream, comments = False):
     advance(stream)
     return head
 
-def skip_junk(stream, comments = True):
-    while skip_ws(stream) or comments and skip_comment(stream):
+def skip_junk(stream, opts):
+    while skip_ws(stream) or not opts.read_comments and skip_comment(stream):
         pass
 
 def skip_ws(stream):
