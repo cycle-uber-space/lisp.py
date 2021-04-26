@@ -759,6 +759,9 @@ def eval(exp, env):
         return exp
     elif is_named_op(exp, "if"):
         return eval_if(exp, env)
+    elif is_named_op(exp, "def"):
+        env_def(env, cadr(exp), eval(caddr(exp), env))
+        return nil
     elif is_named_op(exp, "lambda"):
         return eval_lambda(exp, env)
     elif is_cons(exp):
