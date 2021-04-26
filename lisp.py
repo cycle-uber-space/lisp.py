@@ -384,6 +384,9 @@ def render_expr(exp, opts):
         put_string(out, "nil")
     elif is_symbol(exp):
         put_string(out, symbol_name(exp))
+    elif is_gensym(exp):
+        put_string(out, "#:G")
+        put_int(out, gensym_id(exp))
     elif is_cons(exp):
         render_list(exp, opts)
     else:
