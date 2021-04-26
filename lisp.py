@@ -611,6 +611,18 @@ def env_get(env, var):
     else:
         return car(iter)
 
+def env_dbind(env, vars, vals):
+    if is_nil(vars):
+        return
+    while is_cons(vars):
+        var = car(vars)
+        val = car(vals)
+        env_dbind(env, var, val)
+        vars = cdr(vars)
+        vals = cdr(vals)
+    if not is_nil(vars):
+        env_def(env, vars, vals)
+
 #
 # builtin
 #
