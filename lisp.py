@@ -600,6 +600,21 @@ def env_get(env, var):
         return car(iter)
 
 #
+# builtin
+#
+
+g_builtin_tag = gensym()
+
+def is_builtin(exp):
+    return is_op(exp, g_builtin_tag)
+
+def make_builtin(fun):
+    return make_list(g_builtin_tag, fun)
+
+def builtin_fun(exp):
+    return cadr(exp)
+
+#
 # interpreter
 #
 
