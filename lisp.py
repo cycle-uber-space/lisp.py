@@ -244,6 +244,19 @@ def gensym_id(exp):
     return exp.id
 
 #
+# number
+#
+
+def is_int(exp):
+    return isinstance(exp, int)
+
+def is_float(exp):
+    return isinstance(exp, float)
+
+def is_number(exp):
+    return is_int(exp) or is_float(exp)
+
+#
 # comment
 #
 
@@ -357,6 +370,9 @@ def put_string(out, val):
 def put_int(out, val):
     put_string(out, format("{}", val))
 
+def put_float(out, val):
+    put_string(out, format("{}", val))
+
 #
 # printer
 #
@@ -406,6 +422,10 @@ def render_expr(exp, opts):
     elif is_gensym(exp):
         put_string(out, "#:G")
         put_int(out, gensym_id(exp))
+    elif is_int(exp):
+        put_int(out, exp)
+    elif is_float(exp):
+        put_float(out, exp)
     elif is_cons(exp):
         render_list(exp, opts)
     else:
@@ -494,6 +514,9 @@ def parse_expr(stream, opts):
 
         if re.match("^-?[0-9]+$", lexeme):
             return int(lexeme)
+
+        if re.match("^-?[0-9]+\\.[0-9]+$", lexeme):
+            return float(lexeme)
 
         return intern(lexeme)
 
@@ -726,7 +749,7 @@ def is_named_op(exp, *names):
     return False
 
 def eval(exp, env):
-    if is_nil(exp):
+    if is_nil(exp) or is_number(exp):
         return exp
     elif is_symbol(exp) or is_gensym(exp):
         return env_get(env, exp)
