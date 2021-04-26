@@ -257,6 +257,13 @@ def is_number(exp):
     return is_int(exp) or is_float(exp)
 
 #
+# string
+#
+
+def is_string(exp):
+    return isinstance(exp, str)
+
+#
 # comment
 #
 
@@ -426,6 +433,8 @@ def render_expr(exp, opts):
         put_int(out, exp)
     elif is_float(exp):
         put_float(out, exp)
+    elif is_string(exp):
+        put_string(out, escape(exp, "\""))
     elif is_cons(exp):
         render_list(exp, opts)
     else:
@@ -501,6 +510,9 @@ def parse_expr(stream, opts):
             advance(stream)
         return Comment(lexeme)
 
+    elif peek(stream) == "\"":
+        return parse_string(stream, opts)
+
     elif peek(stream) == "(":
         return parse_list(stream, opts)
 
@@ -551,6 +563,60 @@ def parse_list(stream, opts):
         return make_error("missing closing ')'")
     advance(stream)
     return head
+
+def parse_string(stream, opts):
+    STATE_DEFAULT = 0
+    STATE_ESCAPE = 1
+    STATE_HEX = 2
+    if peek(stream) != "\"":
+        return make_error("missing '\"'")
+    advance(stream)
+    state = STATE_DEFAULT
+    ret = ""
+    val = 0
+    while True:
+        if peek(stream) == 0:
+            return make_error("unexpected end of stream while parsing string")
+        elif state == STATE_DEFAULT:
+            if peek(stream) == "\"":
+                break
+            elif peek(stream) == "\\":
+                advance(stream)
+                state = STATE_ESCAPE
+            else:
+                ret += consume(stream)
+        elif state == STATE_ESCAPE:
+            if peek(stream) == "n":
+                advance(stream)
+                ret += "\n"
+                state = STATE_DEFAULT
+            elif peek(stream) == "t":
+                advance(stream)
+                ret += "\t"
+                state = STATE_DEFAULT
+            elif peek(stream) == "x":
+                advance(stream)
+                val = 0
+                state = STATE_HEX
+            else:
+                ret += consume(stream)
+                state = STATE_DEFAULT
+        elif state == STATE_HEX:
+            if peek(stream) in "0123456789":
+                val *= 16
+                val += ord(consume(stream)) - ord("0")
+            elif peek(stream) in "abcdef":
+                val *= 16
+                val += 10 + ord(consume(stream)) - ord("a")
+            else:
+                ret += chr(val)
+                state = STATE_DEFAULT
+        else:
+            return make_error("internal error")
+    if peek(stream) != "\"":
+        return make_error("missing '\"'")
+    advance(stream)
+    return ret
 
 def skip_junk(stream, opts):
     while skip_ws(stream) or not opts.read_comments and skip_comment(stream):
@@ -749,7 +815,7 @@ def is_named_op(exp, *names):
     return False
 
 def eval(exp, env):
-    if is_nil(exp) or is_number(exp):
+    if is_nil(exp) or is_number(exp) or is_string(exp):
         return exp
     elif is_symbol(exp) or is_gensym(exp):
         return env_get(env, exp)
