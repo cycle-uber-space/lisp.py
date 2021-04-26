@@ -852,6 +852,8 @@ def eval(exp, env):
         return nil
     elif is_named_op(exp, "lambda"):
         return eval_lambda(exp, env)
+    elif is_named_op(exp, "with-env"):
+        return eval_with_env(exp, env)
     elif is_cons(exp):
         return eval_cons(exp, env)
     else:
@@ -904,6 +906,11 @@ def eval_if(exp, env):
 def eval_lambda(exp, env):
     args = cdr(exp)
     return make_function(env, car(args), cdr(args))
+
+def eval_with_env(exp, env):
+    benv = eval(cadr(exp), env)
+    body = cddr(exp)
+    return eval_body(body, benv)
 
 def eval_src(src, env):
     """
