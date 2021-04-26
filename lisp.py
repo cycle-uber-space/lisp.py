@@ -696,6 +696,8 @@ def eval(exp, env):
         return exp
     elif is_named_op(exp, "if"):
         return eval_if(exp, env)
+    elif is_named_op(exp, "lambda"):
+        return eval_lambda(exp, env)
     elif is_cons(exp):
         return eval_cons(exp, env)
     else:
@@ -745,6 +747,10 @@ def eval_if(exp, env):
         return eval(cadddr(exp), env)
     return nil
 
+def eval_lambda(exp, env):
+    args = cdr(exp)
+    return make_function(env, car(args), cdr(args))
+
 def eval_src(src, env):
     """
 >>> eval_src("nil", nil)
@@ -763,12 +769,18 @@ def eval_src(src, env):
 '(lit)'
 >>> eval_src("(lit)", nil)
 '(lit)'
+
 >>> eval_src("(if 't 'a 'b)", nil)
 'a'
 >>> eval_src("(if nil 'a 'b)", nil)
 'b'
 >>> eval_src("(if nil 'a)", nil)
 'nil'
+
+>>> eval_src("((lambda ()))", nil)
+'nil'
+>>> eval_src("((lambda () 'foo))", nil)
+'foo'
 
 >>> eval_src("t", make_core_env())
 't'
