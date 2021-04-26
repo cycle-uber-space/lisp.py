@@ -174,6 +174,47 @@ def cddddr(exp):
     return cdr(cdr(cdr(cdr(exp))))
 
 #
+# list
+#
+
+class ListIter:
+    def __init__(self, x):
+        self.x = x
+    def __next__(self):
+        if is_nil(self.x):
+            raise(StopIteration)
+        ret = car(self.x)
+        self.x = cdr(self.x)
+        return ret
+
+def make_list(*args):
+    ret = nil
+    for arg in reversed(args):
+        ret = cons(arg, ret)
+    return ret
+
+def nreverse(list):
+    if is_nil(list):
+        return list
+    prev = nil
+    expr = list
+    while is_cons(expr):
+        next = cdr(expr)
+        set_cdr(expr, prev)
+        prev = expr
+        expr = next
+    if not is_nil(expr):
+        iter = prev
+        while not is_nil(cdr(iter)):
+            next = car(iter)
+            set_car(iter, expr)
+            expr = next
+        next = car(iter)
+        set_car(iter, expr)
+        set_cdr(iter, next)
+    return prev
+
+#
 # gensym
 #
 
