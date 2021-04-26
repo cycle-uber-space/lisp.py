@@ -919,6 +919,13 @@ def eval_cons(exp, env):
         vals = eval_list(args, env)
         cenv = make_call_env(fenv, vars, vals, env)
         return eval_body(body, cenv)
+    elif is_macro(name):
+        body = macro_body(name)
+        fenv = macro_env(name)
+        vars = macro_args(name)
+        cenv = make_call_env(fenv, vars, args, env)
+        code = eval_body(body, cenv)
+        return eval(code, env)
     else:
         return eval(cons(eval(name, env), args), env)
 
