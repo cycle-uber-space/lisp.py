@@ -14,6 +14,10 @@ py_repr = repr
 def make_error(text):
     raise Exception(text)
 
+def load_text(name):
+    with open(name, "rt") as file:
+        return file.read()
+
 def join(s, l):
     return s.join(l)
 
@@ -453,6 +457,20 @@ def read_one_from_string(src, opts=ReaderOpts()):
     stream = make_string_input_stream(src)
     return parse_expr(stream, opts)
 
+def read_file(path, opts=ReaderOpts()):
+    src = load_text(path)
+    stream = make_string_input_stream(src)
+    for exp in parse_exprs(stream, opts):
+        yield exp
+
+def parse_exprs(stream, opts):
+    while True:
+        skip_junk(stream, opts)
+        if at_end(stream):
+            break
+        exp = parse_expr(stream, opts)
+        yield exp
+
 def parse_expr(stream, opts):
     lexeme = ""
     skip_junk(stream, opts)
@@ -823,6 +841,10 @@ def eval_src(src, env):
 'b'
 """
     return repr_expr(eval(read_one_from_string(src), env))
+
+def load_file(path, env):
+    for exp in read_file(path):
+        eval(exp, env)
 
 #
 # main
