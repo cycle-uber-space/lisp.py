@@ -362,6 +362,12 @@ class PrinterOpts:
         self.out = out
         self.pretty = False
 
+def println(*exps):
+    out = None
+    opts = PrinterOpts(out)
+    render_exprs(exps, opts)
+    put_string(out, "\n")
+
 def repr_expr(exp):
     """
 >>> repr_expr(nil)
@@ -377,6 +383,15 @@ def repr_expr(exp):
     opts = PrinterOpts(out)
     render_expr(exp, opts)
     return out.value
+
+def render_exprs(exps, opts):
+    first = True
+    for exp in exps:
+        if first:
+            first = False
+        else:
+            put_string(opts.out, " ")
+        render_expr(exp, opts)
 
 def render_expr(exp, opts):
     out = opts.out
@@ -641,6 +656,10 @@ def builtin_fun(exp):
 def builtin_eq(a, b):
     return make_bool(eq(a, b))
 
+def builtin_println(*args):
+    println(*args)
+    return nil
+
 #
 # function
 #
@@ -670,10 +689,13 @@ def function_body(exp):
 def make_core_env():
     env = make_env(nil)
     env_def(env, intern("t"), intern("t"))
+
     env_def(env, intern("eq"), make_builtin(builtin_eq))
     env_def(env, intern("cons"), make_builtin(cons))
     env_def(env, intern("car"), make_builtin(car))
     env_def(env, intern("cdr"), make_builtin(cdr))
+
+    env_def(env, intern("println"), make_builtin(builtin_println))
     return env
 
 def is_op(exp, sym):
