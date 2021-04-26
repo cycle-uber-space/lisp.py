@@ -738,10 +738,12 @@ def eval_src(src, env):
 'nil'
 >>> eval_src("'nil", nil)
 'nil'
->>> eval_src("'foo", nil)
-'foo'
+
 >>> eval_src("(quote foo)", nil)
 'foo'
+>>> eval_src("'foo", nil)
+'foo'
+
 >>> eval_src("(lit foo bar baz)", nil)
 '(lit foo bar baz)'
 >>> eval_src("(lit)", nil)
