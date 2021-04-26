@@ -621,6 +621,10 @@ def builtin_fun(exp):
 def make_core_env():
     env = make_env(nil)
     env_def(env, intern("t"), intern("t"))
+    env_def(env, intern("eq"), make_builtin(eq))
+    env_def(env, intern("cons"), make_builtin(cons))
+    env_def(env, intern("car"), make_builtin(car))
+    env_def(env, intern("cdr"), make_builtin(cdr))
     return env
 
 def is_op(exp, sym):
@@ -704,6 +708,9 @@ def eval_src(src, env):
 
 >>> eval_src("t", make_core_env())
 't'
+
+>>> eval_src("(cons 'a 'b)", make_core_env())
+'(a . b)'
 """
     return repr_expr(eval(read_one_from_string(src), env))
 
