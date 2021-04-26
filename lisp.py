@@ -694,10 +694,10 @@ def make_builtin(fun):
 def builtin_fun(exp):
     return cadr(exp)
 
-def builtin_eq(a, b):
+def b_eq(a, b):
     return make_bool(eq(a, b))
 
-def builtin_println(*args):
+def b_println(*args):
     println(*args)
     return nil
 
@@ -731,12 +731,12 @@ def make_core_env():
     env = make_env(nil)
     env_def(env, intern("t"), intern("t"))
 
-    env_def(env, intern("eq"), make_builtin(builtin_eq))
+    env_def(env, intern("eq"), make_builtin(b_eq))
     env_def(env, intern("cons"), make_builtin(cons))
     env_def(env, intern("car"), make_builtin(car))
     env_def(env, intern("cdr"), make_builtin(cdr))
 
-    env_def(env, intern("println"), make_builtin(builtin_println))
+    env_def(env, intern("println"), make_builtin(b_println))
     return env
 
 def is_op(exp, sym):
