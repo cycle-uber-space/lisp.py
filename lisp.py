@@ -776,6 +776,11 @@ def b_println(*args, **kwargs):
     println(*args)
     return nil
 
+def b_load_file(*args, env=nil):
+    for arg in args:
+        load_file(arg, env)
+    return nil
+
 #
 # function
 #
@@ -812,6 +817,7 @@ def make_core_env():
     env_def(env, intern("cdr"), make_builtin(b_cdr))
 
     env_def(env, intern("println"), make_builtin(b_println))
+    env_def(env, intern("load-file"), make_builtin(b_load_file))
     return env
 
 def is_op(exp, sym):
