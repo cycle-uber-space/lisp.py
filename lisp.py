@@ -435,6 +435,12 @@ def render_expr(exp, opts):
         put_float(out, exp)
     elif is_string(exp):
         put_string(out, escape(exp, "\""))
+    elif is_builtin(exp):
+        put_string(out, "#:<builtin>")
+    elif is_function(exp):
+        put_string(out, "#:<function>")
+    elif is_macro(exp):
+        put_string(out, "#:<macro>")
     elif is_cons(exp):
         render_list(exp, opts)
     else:
