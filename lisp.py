@@ -878,6 +878,21 @@ def eval(exp, env):
     elif is_named_op(exp, "def"):
         env_def(env, cadr(exp), eval(caddr(exp), env))
         return nil
+
+    elif is_named_op(exp, "defun"):
+        name = cadr(exp)
+        args = caddr(exp)
+        body = cdddr(exp)
+        env_def(env, name, make_function(env, args, body))
+        return nil
+
+    elif is_named_op(exp, "defmacro"):
+        name = cadr(exp)
+        args = caddr(exp)
+        body = cdddr(exp)
+        env_def(env, name, make_macro(env, args, body))
+        return nil
+
     elif is_named_op(exp, "lambda"):
         return eval_lambda(exp, env)
     elif is_named_op(exp, "with-env"):
