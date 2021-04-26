@@ -760,10 +760,19 @@ def make_builtin(fun):
 def builtin_fun(exp):
     return cadr(exp)
 
-def b_eq(a, b):
+def b_cons(a, b, **kwargs):
+    return cons(a, b)
+
+def b_car(exp, **kwargs):
+    return car(exp)
+
+def b_cdr(exp, **kwargs):
+    return cdr(exp)
+
+def b_eq(a, b, **kwargs):
     return make_bool(eq(a, b))
 
-def b_println(*args):
+def b_println(*args, **kwargs):
     println(*args)
     return nil
 
@@ -798,9 +807,9 @@ def make_core_env():
     env_def(env, intern("t"), intern("t"))
 
     env_def(env, intern("eq"), make_builtin(b_eq))
-    env_def(env, intern("cons"), make_builtin(cons))
-    env_def(env, intern("car"), make_builtin(car))
-    env_def(env, intern("cdr"), make_builtin(cdr))
+    env_def(env, intern("cons"), make_builtin(b_cons))
+    env_def(env, intern("car"), make_builtin(b_car))
+    env_def(env, intern("cdr"), make_builtin(b_cdr))
 
     env_def(env, intern("println"), make_builtin(b_println))
     return env
@@ -859,7 +868,7 @@ def eval_cons(exp, env):
     if is_builtin(name):
         vals = eval_list(args, env)
         fun = builtin_fun(name)
-        return fun(*vals)
+        return fun(*vals, env=env)
     elif is_function(name):
         body = function_body(name)
         fenv = function_env(name)
