@@ -452,8 +452,96 @@ def is_symbol_part(ch):
     return is_symbol_start(ch)
 
 #
+# env
+#
+
+def make_env(outer):
+    return cons(cons(nil, nil), outer)
+
+def env_vars(env):
+    return caar(env)
+
+def env_vals(env):
+    return cdar(env)
+
+def env_outer(env):
+    return cdr(env)
+
+def env_push(env, var, val):
+    pair = car(env)
+    set_car(pair, cons(var, car(pair)))
+    set_cdr(pair, cons(val, cdr(pair)))
+
+def env_find_local(env, var):
+    pair = car(env)
+    vars = car(pair)
+    vals = cdr(pair)
+    while not is_nil(vars):
+        if eq(car(vars), var):
+            return vals
+        vars = cdr(vars)
+        vals = cdr(vals)
+    return nil
+
+def env_find_global(env, var):
+    while not is_nil(env):
+        iter = env_find_local(env, var)
+        if is_nil(iter):
+            env = env_outer(env)
+        else:
+            return iter
+    return nil
+
+def env_def(env, var, val):
+    vals = env_find_local(env, var)
+    if is_nil(vals):
+        env_push(env, var, val)
+    else:
+        set_car(vals, val)
+
+def env_del(env, var):
+    pair = car(env)
+    vars = car(pair)
+    vals = cdr(pair)
+    prev_vars = nil
+    prev_vals = nil
+    while not is_nil(vars):
+        if eq(car(vars), var):
+            if is_nil(prev_vars):
+                set_car(pair, cdr(vars))
+                set_cdr(pair, cdr(vals))
+            else:
+                set_cdr(prev_vars, cdr(vars))
+                set_cdr(prev_vals, cdr(vals))
+            return
+        prev_vars = vars
+        prev_vals = vals
+        vars = cdr(vars)
+        vals = cdr(vals)
+    make_error("cannot remove variable " + repr_expr(var))
+
+def env_set(env, var, val):
+    vals = env_find_global(env, var)
+    if is_nil(vals):
+        make_error("unbound variable " + repr_expr(var))
+    else:
+        set_car(vals, val)
+
+def env_get(env, var):
+    iter = env_find_global(env, var)
+    if is_nil(iter):
+        return make_error("unbound variable " + repr_expr(var))
+    else:
+        return car(iter)
+
+#
 # interpreter
 #
+
+def make_core_env():
+    env = make_env(nil)
+    env_def(env, intern("t"), intern("t"))
+    return env
 
 def is_op(exp, sym):
     return is_cons(exp) and eq(car(exp), sym)
@@ -467,6 +555,8 @@ def is_named_op(exp, *names):
 def eval(exp, env):
     if is_nil(exp):
         return exp
+    elif is_symbol(exp):
+        return env_get(env, exp)
     elif is_named_op(exp, "quote"):
         return cadr(exp)
     elif is_named_op(exp, "lit"):
@@ -507,6 +597,9 @@ def eval_src(src, env):
 'b'
 >>> eval_src("(if nil 'a)", nil)
 'nil'
+
+>>> eval_src("t", make_core_env())
+'t'
 """
     return repr_expr(eval(read_one_from_string(src), env))
 
