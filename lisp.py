@@ -856,6 +856,10 @@ def main(argc, argv):
     cmd = argv[1]
     if cmd == "unit":
         doctest.testmod()
+    elif cmd == "load":
+        env = make_core_env()
+        for path in argv[2:]:
+            load_file(path, env)
 
 if __name__ == "__main__":
     main(len(sys.argv), sys.argv)
