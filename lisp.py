@@ -174,6 +174,28 @@ def cddddr(exp):
     return cdr(cdr(cdr(cdr(exp))))
 
 #
+# gensym
+#
+
+class Gensym:
+    counter = 0
+    def __init__(self):
+        self.id = Gensym.counter
+        Gensym.counter += 1
+    def __repr__(self):
+        return format("#:G{}", self.id)
+
+def is_gensym(exp):
+    return isinstance(exp, Gensym)
+
+def gensym():
+    """
+>>> eq(gensym(), gensym())
+False
+"""
+    return Gensym()
+
+#
 # comment
 #
 
@@ -208,6 +230,8 @@ False
     if py_type(a) == py_type(b):
         if is_symbol(a):
             return symbol_name(a) == symbol_name(b)
+        elif is_gensym(a):
+            return a.id == b.id
         else:
             return a == b
     else:
@@ -555,7 +579,7 @@ def is_named_op(exp, *names):
 def eval(exp, env):
     if is_nil(exp):
         return exp
-    elif is_symbol(exp):
+    elif is_symbol(exp) or is_gensym(exp):
         return env_get(env, exp)
     elif is_named_op(exp, "quote"):
         return cadr(exp)
