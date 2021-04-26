@@ -236,6 +236,9 @@ False
 """
     return Gensym()
 
+def gensym_id(exp):
+    return exp.id
+
 #
 # comment
 #
@@ -278,7 +281,7 @@ False
         if is_symbol(a):
             return symbol_name(a) == symbol_name(b)
         elif is_gensym(a):
-            return a.id == b.id
+            return gensym_id(a) == gensym_id(b)
         else:
             return a == b
     else:
