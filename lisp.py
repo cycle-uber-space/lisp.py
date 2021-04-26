@@ -718,8 +718,20 @@ def eval_src(src, env):
 >>> eval_src("t", make_core_env())
 't'
 
+>>> eval_src("(eq 'a 'b)", make_core_env())
+'nil'
+>>> eval_src("(eq 'a 'a)", make_core_env())
+'t'
+
 >>> eval_src("(cons 'a 'b)", make_core_env())
 '(a . b)'
+>>> eval_src("(cons 'a nil)", make_core_env())
+'(a)'
+
+>>> eval_src("(car (cons 'a 'b))", make_core_env())
+'a'
+>>> eval_src("(cdr (cons 'a 'b))", make_core_env())
+'b'
 """
     return repr_expr(eval(read_one_from_string(src), env))
 
