@@ -832,6 +832,8 @@ def is_named_op(exp, *names):
 def eval(exp, env):
     if is_nil(exp) or is_number(exp) or is_string(exp):
         return exp
+    elif eq(exp, intern("*env*")):
+        return env
     elif is_symbol(exp) or is_gensym(exp):
         return env_get(env, exp)
     elif is_named_op(exp, "quote"):
