@@ -807,6 +807,28 @@ def function_body(exp):
     return cddr(exp)
 
 #
+# macro
+#
+
+g_macro_tag = gensym()
+
+def make_macro(env, args, body):
+    # TODO functions have essentially the same structure
+    return cons(cons(g_macro_tag, env), cons(args, body))
+
+def is_macro(exp):
+    return is_cons(exp) and is_cons(car(exp)) and eq(caar(exp), g_macro_tag)
+
+def macro_env(exp):
+    return cdar(exp)
+
+def macro_args(exp):
+    return cadr(exp)
+
+def macro_body(exp):
+    return cddr(exp)
+
+#
 # interpreter
 #
 
