@@ -259,6 +259,12 @@ def comment_text(exp):
 # core
 #
 
+def make_bool(x):
+    if x:
+        return intern("t")
+    else:
+        return nil
+
 def eq(a, b):
     """
 >>> eq(nil, nil)
@@ -614,6 +620,9 @@ def make_builtin(fun):
 def builtin_fun(exp):
     return cadr(exp)
 
+def builtin_eq(a, b):
+    return make_bool(eq(a, b))
+
 #
 # interpreter
 #
@@ -621,7 +630,7 @@ def builtin_fun(exp):
 def make_core_env():
     env = make_env(nil)
     env_def(env, intern("t"), intern("t"))
-    env_def(env, intern("eq"), make_builtin(eq))
+    env_def(env, intern("eq"), make_builtin(builtin_eq))
     env_def(env, intern("cons"), make_builtin(cons))
     env_def(env, intern("car"), make_builtin(car))
     env_def(env, intern("cdr"), make_builtin(cdr))
