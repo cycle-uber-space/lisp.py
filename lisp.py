@@ -781,6 +781,9 @@ def b_load_file(*args, env=nil):
         load_file(arg, env)
     return nil
 
+def b_make_env(outer, **kwargs):
+    return make_env(outer)
+
 #
 # function
 #
@@ -818,6 +821,8 @@ def make_core_env():
 
     env_def(env, intern("println"), make_builtin(b_println))
     env_def(env, intern("load-file"), make_builtin(b_load_file))
+
+    env_def(env, intern("make-env"), make_builtin(b_make_env))
     return env
 
 def is_op(exp, sym):
