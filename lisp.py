@@ -643,8 +643,32 @@ def eval(exp, env):
         return exp
     elif is_named_op(exp, "if"):
         return eval_if(exp, env)
+    elif is_cons(exp):
+        return eval_cons(exp, env)
     else:
         return make_error("cannot eval " + repr_expr(exp))
+
+def eval_list(exps, env):
+    ret = nil
+    for exp in exps:
+        ret = cons(eval(exp, env), ret)
+    return nreverse(ret)
+
+def eval_body(body, env):
+    ret = nil
+    for stmt in body:
+        ret = eval(stmt, env)
+    return ret
+
+def eval_cons(exp, env):
+    name = car(exp)
+    args = cdr(exp)
+    if is_builtin(name):
+        vals = eval_list(args, env)
+        fun = builtin_fun(name)
+        return fun(*vals)
+    else:
+        return eval(cons(eval(name, env), args), env)
 
 def eval_if(exp, env):
     test = cadr(exp)
