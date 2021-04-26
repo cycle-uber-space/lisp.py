@@ -642,6 +642,28 @@ def builtin_eq(a, b):
     return make_bool(eq(a, b))
 
 #
+# function
+#
+
+g_function_tag = gensym()
+
+def make_function(env, args, body):
+    # TODO macros have essentially the same structure
+    return cons(cons(g_function_tag, env), cons(args, body))
+
+def is_function(exp):
+    return is_cons(exp) and is_cons(car(exp)) and eq(caar(exp), g_function_tag)
+
+def function_env(exp):
+    return cdar(exp)
+
+def function_args(exp):
+    return cadr(exp)
+
+def function_body(exp):
+    return cddr(exp)
+
+#
 # interpreter
 #
 
