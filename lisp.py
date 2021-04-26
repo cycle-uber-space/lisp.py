@@ -713,6 +713,12 @@ def eval_body(body, env):
         ret = eval(stmt, env)
     return ret
 
+def make_call_env(fenv, vars, vals, env):
+    denv = fenv
+    cenv = make_env(denv)
+    env_dbind(cenv, vars, vals)
+    return cenv
+
 def eval_cons(exp, env):
     name = car(exp)
     args = cdr(exp)
@@ -720,6 +726,13 @@ def eval_cons(exp, env):
         vals = eval_list(args, env)
         fun = builtin_fun(name)
         return fun(*vals)
+    elif is_function(name):
+        body = function_body(name)
+        fenv = function_env(name)
+        vars = function_args(name)
+        vals = eval_list(args, env)
+        cenv = make_call_env(fenv, vars, vals, env)
+        return eval_body(body, cenv)
     else:
         return eval(cons(eval(name, env), args), env)
 
