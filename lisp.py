@@ -895,6 +895,8 @@ def eval(exp, env):
 
     elif is_named_op(exp, "lambda"):
         return eval_lambda(exp, env)
+    elif is_named_op(exp, "syntax"):
+        return eval_syntax(exp, env)
     elif is_named_op(exp, "with-env"):
         return eval_with_env(exp, env)
     elif is_cons(exp):
@@ -956,6 +958,10 @@ def eval_if(exp, env):
 def eval_lambda(exp, env):
     args = cdr(exp)
     return make_function(env, car(args), cdr(args))
+
+def eval_syntax(exp, env):
+    args = cdr(exp)
+    return make_macro(env, car(args), cdr(args))
 
 def eval_with_env(exp, env):
     benv = eval(cadr(exp), env)
