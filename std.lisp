@@ -1,10 +1,18 @@
 
-(def pi 3.141592654)
+;;(def pi 3.141592654)
 
-(defun not (arg)
-  (if arg
-      nil
-      t))
+(def not (lambda (arg) (if arg nil t)))
+
+(def defun (syntax (name args . body)
+             `(def ,name (lambda ,args ,@body))))
+
+(def defmacro (syntax (name args . body)
+                `(def ,name (syntax ,args ,@body))))
+
+;;(defun not (arg)
+;;  (if arg
+;;      nil
+;;      t))
 
 (defun append (a b)
   (if a
